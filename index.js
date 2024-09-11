@@ -5,12 +5,12 @@ let meta = {
     checked: false,
 }
 
-let metas = [ meta ]
+let metas = [meta]
 
 const cadastrarMeta = async () => {
-    const meta = await input({ message: "Digite a meta:"})
+    const meta = await input({ message: "Digite a meta:" })
 
-    if(meta.length == 0) {
+    if (meta.length == 0) {
         console.log('A meta não pode ser vazia.')
         return
     }
@@ -26,12 +26,12 @@ const listarMetas = async () => {
         choices: [...metas],
         instructions: false,
     })
-    
+
     metas.forEach((m) => {
         m.checked = false
     })
 
-    if(respostas.length == 0) {
+    if (respostas.length == 0) {
         console.log("Nenhuma meta selecionada!")
         return
     }
@@ -48,27 +48,42 @@ const listarMetas = async () => {
 
 }
 
+const metasAbertas = async () => {
+    const abertas = meta.filter((meta) => {
+        return !meta.checked  // ! e igual != significa diferente 
+    })
+
+    if (abertas.length) {
+        console.log("Não existem metas abertas :)")
+        return
+    }
+
+    await select({
+        message: "Metas Abertas" + abertas.length,
+        choices: [...abertas]
+    })
+}
+
 const metasRealizadas = async () => {
     const realizadas = metas.filter((meta) => {
         return meta.checked
     })
 
-    if(realizadas.length == 0){
+    if (realizadas.length == 0) {
         console.log("Não existem metas realizadas :( ")
         return
     }
 
-    await select ({
-        message: "Metas Realizadas",
+    await select({
+        message: "Metas Realizadas" + realizadas.length,
         choices: [...realizadas],
     })
-
 
 }
 
 const start = async () => {
-    while(true){
-        
+    while (true) {
+
         const opcao = await select({
             message: "Menu >",
             choices: [
@@ -85,13 +100,17 @@ const start = async () => {
                     value: "metasRealizadas"
                 },
                 {
+                    name: " Metas abertas",
+                    value: "metasAbertas"
+                },
+                {
                     name: "Sair",
                     value: "sair"
                 }
             ]
         })
 
-        switch(opcao) {
+        switch (opcao) {
             case "cadastrar":
                 await cadastrarMeta()
                 console.log(metas)
@@ -101,6 +120,9 @@ const start = async () => {
                 break
             case "realizadas":
                 await metasRealizadas()
+                break
+            case "abertas":
+                await metasAbertas()
                 break
             case "sair":
                 console.log('Até a próxima!')
