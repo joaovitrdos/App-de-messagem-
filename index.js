@@ -44,7 +44,7 @@ const listarMetas = async () => {
         meta.checked = true
     })
 
-    console.log('Meta(s) marcadas como concluída(s)')
+    console.log("Meta(s) marcadas como concluída(s)!")
 
 }
 
@@ -54,7 +54,7 @@ const metasAbertas = async () => {
     })
 
     if (abertas.length) {
-        console.log("Não existem metas abertas :)")
+        console.log("Não existem metas abertas! :)")
         return
     }
 
@@ -70,14 +70,42 @@ const metasRealizadas = async () => {
     })
 
     if (realizadas.length == 0) {
-        console.log("Não existem metas realizadas :( ")
+        console.log("Não existem metas realizadas! :( ")
         return
     }
 
     await select({
-        message: "Metas Realizadas" + realizadas.length,
+        message: "Metas Realizadas: " + realizadas.length + "!",
         choices: [...realizadas],
     })
+
+}
+
+const removerMetas = async () => {
+
+    const metasremover = metas.map((meta) => {
+        return { value: meta.value, checked: false }
+    })
+
+    const intensADeletar = await checkbox({
+        message: "Selecione um item para remover",
+        choices: [...metasremover],
+        instructions: false,
+
+    })
+
+    if (intensADeletar.length == 0) {
+        console.log("Nenhum item a remover!")
+        return
+    }
+
+    intensADeletar.forEach((item) =>{
+        metas.filter((meta) =>{
+            return meta.value != item
+        })
+    })
+
+    console.log("Meta(s) removida(s) com sucesso!")
 
 }
 
@@ -104,6 +132,10 @@ const start = async () => {
                     value: "metasAbertas"
                 },
                 {
+                    name: " Remover",
+                    value: "removerMetas"
+                },
+                {
                     name: "Sair",
                     value: "sair"
                 }
@@ -123,6 +155,9 @@ const start = async () => {
                 break
             case "abertas":
                 await metasAbertas()
+                break
+            case "remover":
+                await removerMetas()
                 break
             case "sair":
                 console.log('Até a próxima!')
